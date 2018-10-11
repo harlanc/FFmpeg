@@ -93,7 +93,7 @@ int ijk_tcp_getaddrinfo_nonblock(const char *hostname, const char *servname,
                                  const struct addrinfo *hints, struct addrinfo **res,
                                  int64_t timeout,
                                  const AVIOInterruptCB *int_cb, int one_by_one);
-#ifdef HAVE_PTHREADS
+#if HAVE_PTHREADS
 
 typedef struct TCPAddrinfoRequest
 {
@@ -331,7 +331,7 @@ fail:
 int ijk_tcp_getaddrinfo_nonblock(const char *hostname, const char *servname,
                                  const struct addrinfo *hints, struct addrinfo **res,
                                  int64_t timeout,
-                                 const AVIOInterruptCB *int_cb)
+                                 const AVIOInterruptCB *int_cb,int one_by_one)
 {
     return getaddrinfo(hostname, servname, hints, res);
 }

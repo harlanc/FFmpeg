@@ -117,5 +117,7 @@ int av_application_on_tcp_did_open(AVApplicationContext *h, int error, int fd, A
 void av_application_on_async_statistic(AVApplicationContext *h, AVAppAsyncStatistic *statistic);
 void av_application_on_async_read_speed(AVApplicationContext *h, AVAppAsyncReadSpeed *speed);
 
+char* InetNtop_W(int af, const void* src, char* dst, int cnt);
+
 
 #endif /* AVUTIL_APPLICATION_H */

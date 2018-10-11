@@ -21,6 +21,12 @@
 #include "application.h"
 #include "libavformat/network.h"
 #include "libavutil/avstring.h"
+#if HAVE_WINSOCK2_H
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#endif
+
+
 
 void av_application_on_io_traffic(AVApplicationContext *h, AVAppIOTraffic *event);
 
@@ -148,6 +154,25 @@ int av_application_on_tcp_will_open(AVApplicationContext *h)
     return 0;
 }
 
+#if HAVE_WINSOCK2_H
+
+char* InetNtop_W(int af, const void* src, char* dst, int cnt){
+ 
+    struct sockaddr_in srcaddr;
+ 
+    memset(&srcaddr, 0, sizeof(struct sockaddr_in));
+    memcpy(&(srcaddr.sin_addr), src, sizeof(srcaddr.sin_addr));
+ 
+    srcaddr.sin_family = af;
+    if (WSAAddressToString((struct sockaddr*) &srcaddr, sizeof(struct sockaddr_in), 0, dst, (LPDWORD) &cnt) != 0) {
+        DWORD rv = WSAGetLastError();
+        printf("WSAAddressToString() : %d\n",rv);
+        return NULL;
+    }
+    return dst;
+}
+#endif
+
 // only callback returns error
 int av_application_on_tcp_did_open(AVApplicationContext *h, int error, int fd, AVAppTcpIOControl *control)
 {
@@ -170,18 +195,30 @@ int av_application_on_tcp_did_open(AVApplicationContext *h, int error, int fd, A
     switch (so_family) {
         case AF_INET: {
             struct sockaddr_in* in4 = (struct sockaddr_in*)&so_stg;
-            if (inet_ntop(AF_INET, &(in4->sin_addr), so_ip_name, sizeof(control->ip))) {
+			#if HAVE_WINSOCK2_H
+			if(InetNtop_W(AF_INET, &(in4->sin_addr), so_ip_name, sizeof(control->ip)))
+			#else
+            if (inet_ntop(AF_INET, &(in4->sin_addr), so_ip_name, sizeof(control->ip))) 
+			#endif
+			{
                 control->family = AF_INET;
                 control->port = in4->sin_port;
             }
+		
             break;
         }
         case AF_INET6: {
             struct sockaddr_in6* in6 = (struct sockaddr_in6*)&so_stg;
-            if (inet_ntop(AF_INET6, &(in6->sin6_addr), so_ip_name, sizeof(control->ip))) {
+			#if HAVE_WINSOCK2_H
+			if(InetNtop_W(AF_INET6, &(in6->sin6_addr), so_ip_name, sizeof(control->ip)))
+			#else
+            if (inet_ntop(AF_INET6, &(in6->sin6_addr), so_ip_name, sizeof(control->ip))) 
+		    #endif
+			{
                 control->family = AF_INET6;
                 control->port = in6->sin6_port;
             }
+			
             break;
         }
     }

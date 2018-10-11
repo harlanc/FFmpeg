@@ -22,9 +22,8 @@
 #include "libavutil/time.h"
 #include "libavformat/network.h"
 
-#if HAVE_PTHREADS
-#include <pthread.h>
-#endif
+#include "thread.h"
+
 
 typedef struct DnsCacheContext DnsCacheContext;
 typedef struct DnsCacheContext {
