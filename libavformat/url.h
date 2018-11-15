@@ -340,4 +340,15 @@ const AVClass *ff_urlcontext_child_class_next(const AVClass *prev);
 const URLProtocol **ffurl_get_protocols(const char *whitelist,
                                         const char *blacklist);
 
+/*
+some private protocols for ijkplayer exported for windows
+*/
+int ijkav_register_ijkio_protocol(URLProtocol *protocol, int protocol_size);
+int ijkav_register_async_protocol(URLProtocol *protocol, int protocol_size);
+int ijkav_register_ijklongurl_protocol(URLProtocol *protocol, int protocol_size);
+int ijkav_register_ijktcphook_protocol(URLProtocol *protocol, int protocol_size);
+int ijkav_register_ijkhttphook_protocol(URLProtocol *protocol, int protocol_size);
+int ijkav_register_ijksegment_protocol(URLProtocol *protocol, int protocol_size);
+
+
 #endif /* AVFORMAT_URL_H */
